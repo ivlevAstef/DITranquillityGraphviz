@@ -48,16 +48,16 @@ private final class DotFileMaker {
     var graphvizStr = ""
 
     graphvizStr += "digraph Dependencies {\n"
-    defer { graphvizStr += "}" }
 
     let notEmptyFrameworks = frameworksCouplingInfo.filter { $0.framework != EmptyFramework.self }
     for (index, frameworkInfo) in notEmptyFrameworks.enumerated() {
-      graphvizStr += "  subgraph framework_\(index) {\n"
+      graphvizStr += "  subgraph cluster_\(index) {\n"
       defer { graphvizStr += "  }\n" }
 
-      graphvizStr += "    node [style=filled];\n"
+      graphvizStr += "    style=filled;"
+      graphvizStr += "    color=lightgoldenrodyellow;"
+      graphvizStr += "    node [style=filled,color=white];\n"
       graphvizStr += "    label=\"" + makeFrameworkName(for: frameworkInfo) + "\";\n"
-      graphvizStr += "    color=black;\n"
 
       graphvizStr += makeFrameworkVerticesStr(for: frameworkInfo,
                                               tab: "    ",
@@ -71,6 +71,12 @@ private final class DotFileMaker {
                                               verticesNameMap: verticesNameMap,
                                               verticesCouplingInfo: verticesCouplingInfo)
     }
+
+    graphvizStr += makeEdgesStr(frameworksCouplingInfo: frameworksCouplingInfo,
+                                verticesCouplingInfo: verticesCouplingInfo,
+                                verticesNameMap: verticesNameMap)
+
+    graphvizStr += "}"
 
     do {
       try graphvizStr.write(to: file, atomically: false, encoding: .ascii)
@@ -96,7 +102,41 @@ private final class DotFileMaker {
         continue
       }
 
-      resultStr += tab + vertexName + ";\n"
+      let typeName = makeTypeStr(for: graph.vertices[vertexInfo.vertexIndex])
+      resultStr += tab + vertexName + " [label=\"\(typeName)\"];\n"
+    }
+
+    return resultStr
+  }
+
+  private func makeEdgesStr(frameworksCouplingInfo: [FrameworkCouplingInfo],
+                            verticesCouplingInfo: [VertexCouplingInfo],
+                            verticesNameMap: [Int: String]) -> String {
+    var resultStr = ""
+
+    for frameworkInfo in frameworksCouplingInfo {
+      let vertexInfos = verticesCouplingInfo
+        .filter { frameworkInfo.couplingInfo.vertices.contains($0.vertexIndex) }
+
+      for vertexInfo in vertexInfos {
+        guard let fromVertexName = verticesNameMap[vertexInfo.vertexIndex] else {
+          assertionFailure("Can't find vertex name...")
+          continue
+        }
+
+        for (_, toIndices) in graph.adjacencyList[vertexInfo.vertexIndex] {
+          for toIndex in toIndices {
+            guard let toVertexName = verticesNameMap[toIndex] else {
+              assertionFailure("Can't find vertex name...")
+              continue
+            }
+
+            resultStr += "  \(fromVertexName) -> \(toVertexName);\n"
+          }
+        }
+      }
+      
+      resultStr += "\n"
     }
 
     return resultStr
@@ -141,6 +181,17 @@ private final class DotFileMaker {
     }
 
     return result
+  }
+
+  private func makeTypeStr(for vertex: DIVertex) -> String {
+    switch vertex {
+    case .component(let componentInfo):
+      return "\(componentInfo.componentInfo.type)"
+    case .argument(let argInfo):
+      return "\(argInfo.type)"
+    case .unknown(let unknownInfo):
+      return "\(unknownInfo.type)"
+    }
   }
 
   private func removeInvalidSymbols(_ string: String) -> String {
