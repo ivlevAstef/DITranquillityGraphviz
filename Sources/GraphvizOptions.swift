@@ -33,9 +33,6 @@ private func urlPath(to directory: FileManager.SearchPathDirectory, fileName: St
     fatalError("Can't make path to directory")
   }
 
-  guard let url = URL(string: documentsPath) else {
-    fatalError("Can't make path to directory")
-  }
-
+  let url = URL(fileURLWithPath: documentsPath, isDirectory: true)
   return url.appendingPathComponent(fileName, isDirectory: false)
 }

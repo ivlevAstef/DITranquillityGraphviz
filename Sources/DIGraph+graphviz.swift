@@ -33,9 +33,124 @@ private final class DotFileMaker {
     // coupling info sorted by coupling: inLinks / outLinks.
     let frameworksCouplingInfo = FrameworkCouplingInfoMaker(graph: graph).make()
     let verticesCouplingInfo = VertexCouplingInfoMaker(graph: graph).make()
-    
-    return false
+
+    return fillFile(options.filePath,
+                    frameworksCouplingInfo: frameworksCouplingInfo,
+                    verticesCouplingInfo: verticesCouplingInfo)
   }
+
+  private func fillFile(_ file: URL,
+                        frameworksCouplingInfo: [FrameworkCouplingInfo],
+                        verticesCouplingInfo: [VertexCouplingInfo]) -> Bool {
+    let verticesNameMap = makeVerticesName(frameworksCouplingInfo: frameworksCouplingInfo,
+                                           verticesCouplingInfo: verticesCouplingInfo)
+
+    var graphvizStr = ""
+
+    graphvizStr += "digraph Dependencies {\n"
+    defer { graphvizStr += "}" }
+
+    let notEmptyFrameworks = frameworksCouplingInfo.filter { $0.framework != EmptyFramework.self }
+    for (index, frameworkInfo) in notEmptyFrameworks.enumerated() {
+      graphvizStr += "  subgraph framework_\(index) {\n"
+      defer { graphvizStr += "  }\n" }
+
+      graphvizStr += "    node [style=filled];\n"
+      graphvizStr += "    label=\"" + makeFrameworkName(for: frameworkInfo) + "\";\n"
+      graphvizStr += "    color=black;\n"
+
+      graphvizStr += makeFrameworkVerticesStr(for: frameworkInfo,
+                                              tab: "    ",
+                                              verticesNameMap: verticesNameMap,
+                                              verticesCouplingInfo: verticesCouplingInfo)
+    }
+
+    if let frameworkInfo = frameworksCouplingInfo.first(where: { $0.framework == EmptyFramework.self }) {
+      graphvizStr += makeFrameworkVerticesStr(for: frameworkInfo,
+                                              tab: "  ",
+                                              verticesNameMap: verticesNameMap,
+                                              verticesCouplingInfo: verticesCouplingInfo)
+    }
+
+    do {
+      try graphvizStr.write(to: file, atomically: false, encoding: .ascii)
+      print("Save dot file success on path: \(options.filePath)")
+      return true
+    } catch {
+      assertionFailure("Can't write to file with error: \(error)")
+      return false
+    }
+  }
+
+  private func makeFrameworkVerticesStr(for frameworkInfo: FrameworkCouplingInfo,
+                                        tab: String,
+                                        verticesNameMap: [Int: String],
+                                        verticesCouplingInfo: [VertexCouplingInfo]) -> String {
+    let vertexInfos = verticesCouplingInfo
+      .filter { frameworkInfo.couplingInfo.vertices.contains($0.vertexIndex) }
+
+    var resultStr: String = ""
+    for vertexInfo in vertexInfos {
+      guard let vertexName = verticesNameMap[vertexInfo.vertexIndex] else {
+        assertionFailure("Can't find vertex name...")
+        continue
+      }
+
+      resultStr += tab + vertexName + ";\n"
+    }
+
+    return resultStr
+  }
+
+  private func makeFrameworkName(for frameworkInfo: FrameworkCouplingInfo) -> String {
+    return removeInvalidSymbols("\(frameworkInfo.framework)")
+  }
+
+  private func makeVerticesName(frameworksCouplingInfo: [FrameworkCouplingInfo],
+                                verticesCouplingInfo: [VertexCouplingInfo]) -> [Int: String] {
+    func makeVertexName(for vertexIndex: Int, in frameworkName: String?) -> String {
+      let vertex = graph.vertices[vertexIndex]
+
+      var resultStr: String = frameworkName.flatMap { $0 + "_" } ?? ""
+      switch vertex {
+      case .component(let componentInfo):
+        resultStr += "\(componentInfo.componentInfo.type)"
+      case .unknown(let unknownInfo):
+        assert(frameworkName == nil, "unknown types containts only in global namespace")
+        resultStr += "\(unknownInfo.type)"
+      case .argument:
+        assertionFailure("argument not used for visualization dependency graph")
+        return ""
+      }
+
+      return removeInvalidSymbols(resultStr)
+    }
+
+    var result: [Int: String] = [:]
+    for frameworkInfo in frameworksCouplingInfo {
+      var frameworkName: String?
+      if frameworkInfo.framework != EmptyFramework.self {
+        frameworkName = makeFrameworkName(for: frameworkInfo)
+      }
+
+      for vertexIndex in frameworkInfo.couplingInfo.vertices {
+        let name = makeVertexName(for: vertexIndex, in: frameworkName)
+        assert(result[vertexIndex] == nil, "incorrect info - has dublicated vertexes in different frameworks")
+        result[vertexIndex] = name
+      }
+    }
+
+    return result
+  }
+
+  private func removeInvalidSymbols(_ string: String) -> String {
+    var validSymbols = CharacterSet.alphanumerics
+    validSymbols.insert(charactersIn: "_")
+
+    return string.components(separatedBy: validSymbols.inverted)
+      .joined()
+  }
+
 }
 
 // MARK: - frameworks Coupling Info
@@ -64,7 +179,9 @@ private final class FrameworkCouplingInfoMaker {
   fileprivate class CouplingInfo {
     var inLinks: Set<FrameworkInfo> = []
     var outLinks: Set<FrameworkInfo> = []
-    var vertices: [Int/*vertexIndex*/] = []
+    var vertices: Set<Int/*vertexIndex*/> = []
+
+    var coupling: Double { return Double(inLinks.count + 1) / Double(outLinks.count + 1) }
   }
 
   private let graph: DIGraph
@@ -88,7 +205,7 @@ private final class FrameworkCouplingInfoMaker {
       }
 
       let frameworkInfo = couplingInfo[framework] ?? CouplingInfo()
-      frameworkInfo.vertices.append(vertexIndex)
+      frameworkInfo.vertices.insert(vertexIndex)
       couplingInfo[framework] = frameworkInfo
     }
 
@@ -117,9 +234,7 @@ private final class FrameworkCouplingInfoMaker {
 
   private func sortDictionary(_ couplingInfo: [FrameworkInfo: CouplingInfo]) -> [FrameworkCouplingInfo] {
     return couplingInfo.sorted(by: { (lhs, rhs) in
-      let lhsCoupling = (lhs.value.inLinks.count + 1) / (lhs.value.outLinks.count + 1)
-      let rhsCoupling = (rhs.value.inLinks.count + 1) / (rhs.value.outLinks.count + 1)
-      return lhsCoupling < rhsCoupling
+      return lhs.value.coupling < rhs.value.coupling
     }).map {
       return ($0.key.value, $0.value)
     }
@@ -146,6 +261,8 @@ private final class VertexCouplingInfoMaker {
     var inLinks: Set<Int/*vertexIndex*/> = []
     var outLinks: Set<Int/*vertexIndex*/> = []
     var argLinks: [Int/*vertexIndex*/] = []
+
+    var coupling: Double { return Double(inLinks.count + 1) / Double(outLinks.count + 1) }
   }
 
   private let graph: DIGraph
@@ -187,9 +304,7 @@ private final class VertexCouplingInfoMaker {
 
   private func sortDictionary(_ couplingInfo: [Int: CouplingInfo]) -> [VertexCouplingInfo] {
     return couplingInfo.sorted(by: { (lhs, rhs) in
-      let lhsCoupling = (lhs.value.inLinks.count + 1) / (lhs.value.outLinks.count + 1)
-      let rhsCoupling = (rhs.value.inLinks.count + 1) / (rhs.value.outLinks.count + 1)
-      return lhsCoupling < rhsCoupling
+      return lhs.value.coupling < rhs.value.coupling
     }).map {
       return ($0.key, $0.value)
     }
