@@ -11,6 +11,10 @@
 		16ABEC4024B81C81007577CF /* DIGraph+graphviz.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16ABEC3F24B81C81007577CF /* DIGraph+graphviz.swift */; };
 		16ABEC4324B81CC8007577CF /* DITranquillity in Frameworks */ = {isa = PBXBuildFile; productRef = 16ABEC4224B81CC8007577CF /* DITranquillity */; };
 		16ABEC4524B81D4B007577CF /* GraphvizOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16ABEC4424B81D4B007577CF /* GraphvizOptions.swift */; };
+		16ABEC4924BB18A2007577CF /* FrameworkCouplingInfoMaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16ABEC4824BB18A2007577CF /* FrameworkCouplingInfoMaker.swift */; };
+		16ABEC4B24BB1962007577CF /* VertexCouplingInfoMaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16ABEC4A24BB1962007577CF /* VertexCouplingInfoMaker.swift */; };
+		16ABEC4D24BB1A24007577CF /* DotFileMakerModeAny.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16ABEC4C24BB1A24007577CF /* DotFileMakerModeAny.swift */; };
+		16ABEC4F24BB1BCD007577CF /* DotFileMakerModeFrameworks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16ABEC4E24BB1BCD007577CF /* DotFileMakerModeFrameworks.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -19,6 +23,10 @@
 		16ABEC3C24B81C39007577CF /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		16ABEC3F24B81C81007577CF /* DIGraph+graphviz.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DIGraph+graphviz.swift"; sourceTree = "<group>"; };
 		16ABEC4424B81D4B007577CF /* GraphvizOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphvizOptions.swift; sourceTree = "<group>"; };
+		16ABEC4824BB18A2007577CF /* FrameworkCouplingInfoMaker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FrameworkCouplingInfoMaker.swift; sourceTree = "<group>"; };
+		16ABEC4A24BB1962007577CF /* VertexCouplingInfoMaker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VertexCouplingInfoMaker.swift; sourceTree = "<group>"; };
+		16ABEC4C24BB1A24007577CF /* DotFileMakerModeAny.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DotFileMakerModeAny.swift; sourceTree = "<group>"; };
+		16ABEC4E24BB1BCD007577CF /* DotFileMakerModeFrameworks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DotFileMakerModeFrameworks.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,10 +60,14 @@
 		16ABEC3A24B81C39007577CF /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				16ABEC4824BB18A2007577CF /* FrameworkCouplingInfoMaker.swift */,
+				16ABEC4A24BB1962007577CF /* VertexCouplingInfoMaker.swift */,
 				16ABEC3B24B81C39007577CF /* DITranquillityGraphviz.h */,
 				16ABEC3C24B81C39007577CF /* Info.plist */,
 				16ABEC3F24B81C81007577CF /* DIGraph+graphviz.swift */,
 				16ABEC4424B81D4B007577CF /* GraphvizOptions.swift */,
+				16ABEC4C24BB1A24007577CF /* DotFileMakerModeAny.swift */,
+				16ABEC4E24BB1BCD007577CF /* DotFileMakerModeFrameworks.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -148,6 +160,10 @@
 			files = (
 				16ABEC4024B81C81007577CF /* DIGraph+graphviz.swift in Sources */,
 				16ABEC4524B81D4B007577CF /* GraphvizOptions.swift in Sources */,
+				16ABEC4F24BB1BCD007577CF /* DotFileMakerModeFrameworks.swift in Sources */,
+				16ABEC4924BB18A2007577CF /* FrameworkCouplingInfoMaker.swift in Sources */,
+				16ABEC4D24BB1A24007577CF /* DotFileMakerModeAny.swift in Sources */,
+				16ABEC4B24BB1962007577CF /* VertexCouplingInfoMaker.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

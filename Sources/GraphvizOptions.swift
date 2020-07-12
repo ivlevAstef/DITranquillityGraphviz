@@ -6,14 +6,26 @@
 //  Copyright © 2020 sia. All rights reserved.
 //
 
-import Foundation
+import DITranquillity
 
 public struct GraphVizOptions {
   public static let `default` = GraphVizOptions(
-    filePath: defaultURLPath(fileName: "dependency_graph.dot")
+    filePath: defaultURLPath(fileName: "dependency_graph.dot"),
+    mode: .any,
+    ignoreUnknown: true,
+    ignoreOptional: false
   )
 
+  public enum Mode {
+    case any
+    case framework(_ framework: DIFramework.Type)
+    case frameworks
+  }
+
   public var filePath: URL
+  public var mode: Mode
+  public var ignoreUnknown: Bool
+  public var ignoreOptional: Bool
 }
 
 #if os(iOS)
