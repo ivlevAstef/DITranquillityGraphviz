@@ -128,7 +128,7 @@ final class DotFileMakerModeAny: DotFileMaker {
   }
 
   private func makeFrameworkName(for frameworkInfo: FrameworkCouplingInfo) -> String {
-    return removeInvalidSymbols("\(frameworkInfo.framework)")
+    return removeInvalidSymbols("\(frameworkInfo.framework.value)")
   }
 
   private func makeVerticesName(frameworksCouplingInfo: [FrameworkCouplingInfo],
