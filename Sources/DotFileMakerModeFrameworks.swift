@@ -8,6 +8,21 @@
 
 import DITranquillity
 
+private struct FrameworkLink: Hashable {
+  let one: FrameworkCouplingInfoMaker.FrameworkInfo
+  let two: FrameworkCouplingInfoMaker.FrameworkInfo
+
+  func hash(into hasher: inout Hasher) {
+    hasher.combine(one)
+    hasher.combine(two)
+  }
+
+  static func ==(lhs: FrameworkLink, rhs: FrameworkLink) -> Bool {
+    return (lhs.one == rhs.one && lhs.two == rhs.two) ||
+           (lhs.one == rhs.two && lhs.two == rhs.one)
+  }
+}
+
 final class DotFileMakerModeFrameworks: DotFileMaker {
 
   private let graph: DIGraph
@@ -26,23 +41,28 @@ final class DotFileMakerModeFrameworks: DotFileMaker {
   }
 
   private func makeDotString(frameworksCouplingInfo: [FrameworkCouplingInfo]) -> String {
+    let nameMaker = NameMaker(graph: graph)
+    nameMaker.frameworksCouplingInfo = frameworksCouplingInfo
+
     var graphvizStr = ""
 
     graphvizStr += "digraph Dependencies {\n"
+    graphvizStr += "  concentrate=true;\n" // for auto two side edges
     graphvizStr += "  newrank=true;\n"
     graphvizStr += "  rankdir=TB;\n"
+    graphvizStr += "  graph [splines=ortho, nodesep=1];\n"
 
     graphvizStr += "  node [style=filled,color=lightgoldenrodyellow,shape=box];\n"
 
     let notEmptyFrameworks = frameworksCouplingInfo.filter { !$0.framework.isEmpty }
     for frameworkInfo in notEmptyFrameworks {
-      graphvizStr += "  \(makeFrameworkName(for: frameworkInfo.framework));\n"
+      graphvizStr += "  \(nameMaker.makeFrameworkName(for: frameworkInfo));\n"
     }
 
     for fromFrameworkInfo in notEmptyFrameworks {
-      let fromFrameworkName = makeFrameworkName(for: fromFrameworkInfo.framework)
+      let fromFrameworkName = nameMaker.makeFrameworkName(for: fromFrameworkInfo)
       for toFramework in fromFrameworkInfo.couplingInfo.outLinks where !toFramework.isEmpty {
-        let toFrameworkName = makeFrameworkName(for: toFramework)
+        let toFrameworkName = nameMaker.makeFrameworkName(for: toFramework)
 
         graphvizStr += "  \(fromFrameworkName) -> \(toFrameworkName);\n"
       }
@@ -52,10 +72,6 @@ final class DotFileMakerModeFrameworks: DotFileMaker {
     graphvizStr += "}"
 
     return graphvizStr
-  }
-
-  private func makeFrameworkName(for frameworkInfo: FrameworkCouplingInfoMaker.FrameworkInfo) -> String {
-    return removeInvalidSymbols("\(frameworkInfo.value)")
   }
 
 }

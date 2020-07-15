@@ -18,6 +18,7 @@ public struct GraphVizOptions {
 
   public enum Mode {
     case any
+    case onlyGraph(obfuscate: Bool)
     case framework(_ framework: DIFramework.Type)
     case frameworks
   }

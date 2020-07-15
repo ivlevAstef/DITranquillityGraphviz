@@ -13,6 +13,8 @@ extension DIGraph {
   public func makeDotFile(_ options: GraphVizOptions = GraphVizOptions.default) -> Bool {
     let fileMaker: DotFileMaker
     switch options.mode {
+    case .onlyGraph(let obfuscate):
+        fileMaker = DotFileMakerModeOnlyGraph(graph: self, options: options, obfuscate: obfuscate)
     case .any:
       fileMaker = DotFileMakerModeAny(graph: self, options: options)
     case .frameworks:
@@ -39,13 +41,5 @@ extension DotFileMaker {
       assertionFailure("Can't write to file with error: \(error)")
       return false
     }
-  }
-
-  func removeInvalidSymbols(_ string: String) -> String {
-    var validSymbols = CharacterSet.alphanumerics
-    validSymbols.insert(charactersIn: "_")
-
-    return string.components(separatedBy: validSymbols.inverted)
-      .joined()
   }
 }

@@ -1,5 +1,5 @@
 //
-//  DotFileMakerModeAny.swift
+//  DotFileMakerModeOnlyGraph.swift
 //  DITranquillityGraphviz
 //
 //  Created by Ивлев А.Е. on 12.07.2020.
@@ -8,14 +8,16 @@
 
 import DITranquillity
 
-final class DotFileMakerModeAny: DotFileMaker {
+final class DotFileMakerModeOnlyGraph: DotFileMaker {
 
   private let graph: DIGraph
   private let options: GraphVizOptions
+  private let obfuscate: Bool
 
-  init(graph: DIGraph, options: GraphVizOptions) {
+  init(graph: DIGraph, options: GraphVizOptions, obfuscate: Bool) {
     self.graph = graph
     self.options = options
+    self.obfuscate = obfuscate
   }
 
   func makeDotString() -> String {
@@ -33,37 +35,22 @@ final class DotFileMakerModeAny: DotFileMaker {
     nameMaker.frameworksCouplingInfo = frameworksCouplingInfo
     nameMaker.verticesCouplingInfo = verticesCouplingInfo
 
-    var verticesNameMap = nameMaker.makeVerticesName()
-    if options.ignoreUnknown {
-      for (index, vertex) in graph.vertices.enumerated() {
-        if case .unknown = vertex {
-          verticesNameMap.removeValue(forKey: index)
-        }
-      }
-    }
+    let verticesNameMap = nameMaker.makeVerticesName(obfuscate: obfuscate)
 
     var graphvizStr = ""
 
     graphvizStr += "digraph Dependencies {\n"
-    graphvizStr += "  newrank=true;\n"
 
     let notEmptyFrameworks = frameworksCouplingInfo.filter { !$0.framework.isEmpty }
-
-    if notEmptyFrameworks.isEmpty {
-      graphvizStr += "  rankdir=TB;\n"
-    } else {
-      graphvizStr += "  rankdir=LR;\n"
-    }
 
     for (index, frameworkInfo) in notEmptyFrameworks.enumerated() {
       graphvizStr += "  subgraph cluster_\(index) {\n"
       defer { graphvizStr += "  }\n" }
 
-      graphvizStr += "    style=filled;\n"
-      graphvizStr += "    color=lightgoldenrodyellow;\n"
-      graphvizStr += "    node [style=filled,color=white];\n"
-      graphvizStr += "    label=\"" + nameMaker.makeFrameworkName(for: frameworkInfo) + "\";\n"
-
+      if !obfuscate {
+        graphvizStr += "    label=\"" + nameMaker.makeFrameworkName(for: frameworkInfo) + "\";\n"
+      }
+      
       graphvizStr += makeFrameworkVerticesStr(for: frameworkInfo,
                                               tab: "    ",
                                               verticesNameMap: verticesNameMap,
@@ -99,8 +86,7 @@ final class DotFileMakerModeAny: DotFileMaker {
         continue
       }
 
-      let typeName = NameMaker.makeTypeStr(for: graph.vertices[vertexInfo.vertexIndex])
-      resultStr += tab + vertexName + " [label=\"\(typeName)\"];\n"
+      resultStr += tab + vertexName + ";\n"
     }
 
     return resultStr
