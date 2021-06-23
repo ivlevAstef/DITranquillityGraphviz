@@ -11,7 +11,7 @@ let package = Package(
     ],
     targets: [
         .target(name: "DITranquillityGraphviz", dependencies: [
-            "DITranqullity"
+            "DITranquillity"
         ], path: "./Sources")
     ]
 )
