@@ -6,6 +6,7 @@
 //  Copyright © 2020 sia. All rights reserved.
 //
 
+import Foundation
 import DITranquillity
 
 final class NameMaker {
