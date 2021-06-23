@@ -15,4 +15,3 @@ let package = Package(
         ], path: "./Sources")
     ]
 )
-
