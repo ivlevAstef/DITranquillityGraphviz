@@ -15,6 +15,8 @@
 		16ABEC4B24BB1962007577CF /* VertexCouplingInfoMaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16ABEC4A24BB1962007577CF /* VertexCouplingInfoMaker.swift */; };
 		16ABEC4D24BB1A24007577CF /* DotFileMakerModeAny.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16ABEC4C24BB1A24007577CF /* DotFileMakerModeAny.swift */; };
 		16ABEC4F24BB1BCD007577CF /* DotFileMakerModeFrameworks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16ABEC4E24BB1BCD007577CF /* DotFileMakerModeFrameworks.swift */; };
+		ABEE2C822683863500F60B21 /* NameMaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABEE2C802683863500F60B21 /* NameMaker.swift */; };
+		ABEE2C832683863500F60B21 /* DotFileMakerModeOnlyGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABEE2C812683863500F60B21 /* DotFileMakerModeOnlyGraph.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,6 +29,8 @@
 		16ABEC4A24BB1962007577CF /* VertexCouplingInfoMaker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VertexCouplingInfoMaker.swift; sourceTree = "<group>"; };
 		16ABEC4C24BB1A24007577CF /* DotFileMakerModeAny.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DotFileMakerModeAny.swift; sourceTree = "<group>"; };
 		16ABEC4E24BB1BCD007577CF /* DotFileMakerModeFrameworks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DotFileMakerModeFrameworks.swift; sourceTree = "<group>"; };
+		ABEE2C802683863500F60B21 /* NameMaker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NameMaker.swift; sourceTree = "<group>"; };
+		ABEE2C812683863500F60B21 /* DotFileMakerModeOnlyGraph.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DotFileMakerModeOnlyGraph.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,6 +64,8 @@
 		16ABEC3A24B81C39007577CF /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				ABEE2C812683863500F60B21 /* DotFileMakerModeOnlyGraph.swift */,
+				ABEE2C802683863500F60B21 /* NameMaker.swift */,
 				16ABEC4824BB18A2007577CF /* FrameworkCouplingInfoMaker.swift */,
 				16ABEC4A24BB1962007577CF /* VertexCouplingInfoMaker.swift */,
 				16ABEC3B24B81C39007577CF /* DITranquillityGraphviz.h */,
@@ -113,7 +119,7 @@
 		16ABEC2624B81BE9007577CF /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1140;
+				LastUpgradeCheck = 1250;
 				ORGANIZATIONNAME = sia;
 				TargetAttributes = {
 					16ABEC2E24B81BE9007577CF = {
@@ -158,7 +164,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ABEE2C822683863500F60B21 /* NameMaker.swift in Sources */,
 				16ABEC4024B81C81007577CF /* DIGraph+graphviz.swift in Sources */,
+				ABEE2C832683863500F60B21 /* DotFileMakerModeOnlyGraph.swift in Sources */,
 				16ABEC4524B81D4B007577CF /* GraphvizOptions.swift in Sources */,
 				16ABEC4F24BB1BCD007577CF /* DotFileMakerModeFrameworks.swift in Sources */,
 				16ABEC4924BB18A2007577CF /* FrameworkCouplingInfoMaker.swift in Sources */,
@@ -196,6 +204,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -221,7 +230,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -259,6 +268,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -278,7 +288,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -302,7 +312,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = "$(SRCROOT)/Sources/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -330,7 +340,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = "$(SRCROOT)/Sources/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
